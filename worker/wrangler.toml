@@ -1,0 +1,12 @@
+name = "steam-recomendador-api"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+
+# Secrets (definidos com `wrangler secret put <NOME>`, nunca aqui em texto):
+#   DATABASE_URL   -- connection string da Neon
+#   STEAM_API_KEY  -- chave da Steam Web API
+#   SESSION_SECRET -- chave aleatória usada para assinar o cookie de sessão
+#
+# Variáveis não sensíveis podem ficar aqui em [vars]:
+[vars]
+PUBLIC_BASE_URL = "http://localhost:8787"
