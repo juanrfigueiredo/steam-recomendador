@@ -1,0 +1,43 @@
+name: Deploy do backend (Cloudflare Workers)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "worker/**"
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Checar tipos
+        run: npx tsc --noEmit
+
+      - name: Sincronizar secrets do Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        run: |
+          echo "$DATABASE_URL" | npx wrangler secret put DATABASE_URL
+          echo "$STEAM_API_KEY" | npx wrangler secret put STEAM_API_KEY
+          echo "$SESSION_SECRET" | npx wrangler secret put SESSION_SECRET
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler deploy

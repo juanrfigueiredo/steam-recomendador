@@ -1,0 +1,50 @@
+name: Agregar e publicar dataset (AWS Data Exchange + Datarade)
+
+on:
+  schedule:
+    # toda segunda-feira às 06:00 UTC (03:00 horário de Brasília)
+    - cron: "0 6 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Agregar e anonimizar preferências
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          K_ANONYMITY: "5"
+        run: python scripts/aggregate_preferences.py
+
+      - name: Publicar no AWS Data Exchange
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          ADX_DATASET_ID: ${{ secrets.ADX_DATASET_ID }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        run: python scripts/publish_aws_data_exchange.py
+
+      - name: Preparar entrega para o Datarade
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        run: python scripts/publish_datarade.py
+
+      - name: Guardar export como artifact do workflow
+        uses: actions/upload-artifact@v4
+        with:
+          name: preferencias-agregadas
+          path: export/
+          retention-days: 14
