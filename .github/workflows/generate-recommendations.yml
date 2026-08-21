@@ -1,0 +1,26 @@
+name: Gerar recomendações em lote
+
+on:
+  schedule:
+    # todo dia às 05:00 UTC (02:00 horário de Brasília)
+    - cron: "0 5 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  recomendar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Gerar recomendações
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TOP_N_POR_USUARIO: "50"
+        run: python scripts/generate_recommendations.py
