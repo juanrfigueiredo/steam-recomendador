@@ -190,19 +190,7 @@ header.topbar .brand {
 .landing-hero p {
   color: var(--text-muted);
   max-width: 540px;
-  margin-top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 56px;
-}
-
-.aviso-privacidade {
-  margin-top: 56px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 36px;
 }
 
 /* --- cards / seções --- */
