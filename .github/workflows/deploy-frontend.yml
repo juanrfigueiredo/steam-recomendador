@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Selar versão dos assets (cache-busting)
+        run: sed -i "s/__BUILD__/${GITHUB_SHA::8}/g" frontend/*.html
+
       - name: Criar projeto Pages (se ainda não existir)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
