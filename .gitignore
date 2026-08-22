@@ -1,0 +1,25 @@
+# Node / Cloudflare Workers & Pages
+node_modules/
+.wrangler/
+npm-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Saída gerada pelos scripts de agregação/exportação (dado, não código)
+export/
+
+# Segredos locais -- nunca commitar, sempre via GitHub Actions secrets
+.env
+.env.*
+*.env
+
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
