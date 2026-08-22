@@ -112,21 +112,9 @@ h1, h2, h3 {
 }
 
 @media (min-width: 1460px) {
-  /* Acima do tamanho de projeto, a caixa para de crescer com a tela --
-     fica com altura de teto (perto de 1080p menos a chrome do navegador)
-     e centraliza de verdade (flex no body), com rolagem própria se o
-     conteúdo passar do teto. Assim ela não vira uma caixa gigante e vazia
-     em monitores maiores. */
-  body {
-    align-items: center;
-    justify-content: center;
-  }
-
   .app-frame {
-    margin: 24px 0;
-    min-height: 0;
-    max-height: min(1000px, calc(100vh - 48px));
-    overflow-y: auto;
+    margin: 32px auto;
+    min-height: calc(100vh - 64px);
     border: 2px solid var(--border-strong);
     box-shadow: 14px 14px 0 var(--shadow-color);
   }
