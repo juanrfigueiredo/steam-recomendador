@@ -116,6 +116,11 @@ def gerar_recomendacoes(biblioteca, feedback, catalogo, usuarios, top_n):
         possui = jogos_por_usuario.get(user_id, set())
         candidatos = catalogo[~catalogo["app_id"].isin(possui)].copy()
 
+        # Sem candidato (ex: usuário já possui todo o catálogo conhecido) --
+        # nada a recomendar ainda, não é erro.
+        if candidatos.empty:
+            continue
+
         afinidade_usuario = afinidade[afinidade["user_id"] == user_id][["genero", "afinidade"]]
         tem_dado_suficiente = not afinidade_usuario.empty
 
@@ -126,6 +131,7 @@ def gerar_recomendacoes(biblioteca, feedback, catalogo, usuarios, top_n):
             candidatos = candidatos.merge(popularidade_global, on="genero", how="left")
             candidatos["score"] = candidatos["popularidade"].fillna(0)
 
+        candidatos["score"] = candidatos["score"].astype(float)
         top = candidatos.nlargest(top_n, "score")[["app_id", "score"]]
         top["user_id"] = user_id
         linhas_finais.append(top)

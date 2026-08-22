@@ -19,6 +19,11 @@ jobs:
       - name: Instalar dependências
         run: pip install -r requirements.txt
 
+      - name: Enriquecer catálogo (gênero/tags via Steam Store API)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python scripts/enrich_catalog.py
+
       - name: Gerar recomendações
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
