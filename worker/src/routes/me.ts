@@ -42,23 +42,31 @@ meRoutes.post("/sync", async (c) => {
 
   const games = await fetchOwnedGames(steamId64, c.env.STEAM_API_KEY);
 
-  try {
-    for (const game of games) {
+  // Upsert em lote (unnest) em vez de uma query por jogo: o Worker tem limite
+  // de subrequests por invocação (50 no plano gratuito), e uma query por jogo
+  // estoura esse limite em qualquer biblioteca com mais de ~25 jogos.
+  if (games.length > 0) {
+    const appIds = games.map((g) => g.appid);
+    const names = games.map((g) => g.name ?? "(sem nome)");
+    const playtimes = games.map((g) => g.playtime_forever);
+
+    try {
       await db`
         insert into game_catalog (app_id, nome)
-        values (${game.appid}, ${game.name ?? "(sem nome)"})
+        select * from unnest(${appIds}::bigint[], ${names}::text[])
         on conflict (app_id) do update set nome = excluded.nome
       `;
       await db`
         insert into game_library (user_id, app_id, playtime_minutos, last_synced_at)
-        values (${c.get("userId")}, ${game.appid}, ${game.playtime_forever}, now())
+        select ${c.get("userId")}, app_id, playtime, now()
+        from unnest(${appIds}::bigint[], ${playtimes}::integer[]) as t(app_id, playtime)
         on conflict (user_id, app_id) do update
           set playtime_minutos = excluded.playtime_minutos,
               last_synced_at = excluded.last_synced_at
       `;
+    } catch (err) {
+      return c.json({ error: "falha ao sincronizar biblioteca", detalhe: String(err) }, 500);
     }
-  } catch (err) {
-    return c.json({ error: "falha ao sincronizar biblioteca", detalhe: String(err) }, 500);
   }
 
   return c.json({ ok: true, jogos_sincronizados: games.length });
