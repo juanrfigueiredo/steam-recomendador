@@ -42,19 +42,23 @@ meRoutes.post("/sync", async (c) => {
 
   const games = await fetchOwnedGames(steamId64, c.env.STEAM_API_KEY);
 
-  for (const game of games) {
-    await db`
-      insert into game_catalog (app_id, nome)
-      values (${game.appid}, ${game.name})
-      on conflict (app_id) do update set nome = excluded.nome
-    `;
-    await db`
-      insert into game_library (user_id, app_id, playtime_minutos, last_synced_at)
-      values (${c.get("userId")}, ${game.appid}, ${game.playtime_forever}, now())
-      on conflict (user_id, app_id) do update
-        set playtime_minutos = excluded.playtime_minutos,
-            last_synced_at = excluded.last_synced_at
-    `;
+  try {
+    for (const game of games) {
+      await db`
+        insert into game_catalog (app_id, nome)
+        values (${game.appid}, ${game.name ?? "(sem nome)"})
+        on conflict (app_id) do update set nome = excluded.nome
+      `;
+      await db`
+        insert into game_library (user_id, app_id, playtime_minutos, last_synced_at)
+        values (${c.get("userId")}, ${game.appid}, ${game.playtime_forever}, now())
+        on conflict (user_id, app_id) do update
+          set playtime_minutos = excluded.playtime_minutos,
+              last_synced_at = excluded.last_synced_at
+      `;
+    }
+  } catch (err) {
+    return c.json({ error: "falha ao sincronizar biblioteca", detalhe: String(err) }, 500);
   }
 
   return c.json({ ok: true, jogos_sincronizados: games.length });
