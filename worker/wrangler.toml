@@ -10,4 +10,4 @@ account_id = "c02aa873b018a8d2d90afc2b0f20ff9c"
 #
 # Variáveis não sensíveis podem ficar aqui em [vars]:
 [vars]
-PUBLIC_BASE_URL = "http://localhost:8787"
+PUBLIC_BASE_URL = "https://steam-recomendador-api.juanrfigueiredo.workers.dev"
