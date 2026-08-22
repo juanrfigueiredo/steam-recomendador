@@ -3,4 +3,5 @@ export type Env = {
   STEAM_API_KEY: string;
   SESSION_SECRET: string;
   PUBLIC_BASE_URL: string;
+  FRONTEND_URL: string;
 };

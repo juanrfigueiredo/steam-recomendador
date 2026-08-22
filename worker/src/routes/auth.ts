@@ -41,13 +41,14 @@ authRoutes.get("/steam/callback", async (c) => {
   setCookie(c, SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: true,
-    sameSite: "Lax",
+    // "None" porque o frontend (Cloudflare Pages) fica em domínio
+    // diferente do Worker -- precisa ser enviado em fetch() cross-site.
+    sameSite: "None",
     maxAge: SESSION_TTL_SECONDS,
     path: "/",
   });
 
-  // Em produção, redirecionar para o dashboard do frontend em vez de retornar JSON.
-  return c.redirect(`${c.env.PUBLIC_BASE_URL}/dashboard`);
+  return c.redirect(`${c.env.FRONTEND_URL}/dashboard.html`);
 });
 
 authRoutes.post("/logout", (c) => {

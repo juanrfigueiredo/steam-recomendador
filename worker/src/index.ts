@@ -14,7 +14,7 @@ const app = new Hono<{ Bindings: Env; Variables: AuthedVars }>();
 app.use(
   "*",
   cors({
-    origin: (origin, c) => (origin === c.env.PUBLIC_BASE_URL ? origin : ""),
+    origin: (origin, c) => (origin === c.env.FRONTEND_URL ? origin : ""),
     credentials: true,
   })
 );

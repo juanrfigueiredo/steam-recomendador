@@ -10,4 +10,8 @@ account_id = "c02aa873b018a8d2d90afc2b0f20ff9c"
 #
 # Variáveis não sensíveis podem ficar aqui em [vars]:
 [vars]
+# URL do próprio Worker -- usada no fluxo OpenID da Steam (return_to/realm).
 PUBLIC_BASE_URL = "https://steam-recomendador-api.juanrfigueiredo.workers.dev"
+# URL do frontend (Cloudflare Pages) -- domínio diferente do Worker, usada
+# para redirecionar após login e como origem permitida no CORS.
+FRONTEND_URL = "https://steam-recomendador.pages.dev"
