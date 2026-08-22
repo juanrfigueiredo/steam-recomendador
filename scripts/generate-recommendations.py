@@ -27,9 +27,11 @@ Variáveis de ambiente esperadas:
 """
 
 import os
+from datetime import datetime, timezone
 
 import pandas as pd
 import psycopg2
+from psycopg2.extras import execute_values
 
 TOP_N_POR_USUARIO = int(os.environ.get("TOP_N_POR_USUARIO", "50"))
 
@@ -135,17 +137,30 @@ def gerar_recomendacoes(biblioteca, feedback, catalogo, usuarios, top_n):
 
 
 def gravar_recomendacoes(conn, recomendacoes):
+    if recomendacoes.empty:
+        return
+
+    agora = datetime.now(timezone.utc)
+    valores = [
+        (int(linha.user_id), int(linha.app_id), round(float(linha.score), 2), agora)
+        for linha in recomendacoes.itertuples(index=False)
+    ]
+
+    # Grava em lote (execute_values) em vez de um INSERT por linha: com
+    # TOP_N_POR_USUARIO x número de usuários, um INSERT por linha vira
+    # milhares de idas sequenciais ao Neon pela rede a partir do runner do
+    # GitHub Actions -- mesmo problema resolvido no /me/sync do Worker.
     with conn.cursor() as cur:
-        for _, linha in recomendacoes.iterrows():
-            cur.execute(
-                """
-                insert into recommendations (user_id, app_id, score, generated_at)
-                values (%s, %s, %s, now())
-                on conflict (user_id, app_id) do update
-                    set score = excluded.score, generated_at = excluded.generated_at
-                """,
-                (int(linha["user_id"]), int(linha["app_id"]), round(float(linha["score"]), 2)),
-            )
+        execute_values(
+            cur,
+            """
+            insert into recommendations (user_id, app_id, score, generated_at)
+            values %s
+            on conflict (user_id, app_id) do update
+                set score = excluded.score, generated_at = excluded.generated_at
+            """,
+            valores,
+        )
     conn.commit()
 
 
