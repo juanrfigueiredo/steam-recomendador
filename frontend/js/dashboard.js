@@ -53,22 +53,19 @@ function criarLinhaRecomendacao(rec) {
   const score = Number(rec.score);
 
   const item = document.createElement("div");
-  item.className = "card-header";
-  item.style.borderBottom = "1px solid var(--border)";
-  item.style.paddingBottom = "10px";
-  item.style.marginBottom = "10px";
+  item.className = "recomendacao-item";
 
   const info = document.createElement("div");
+  info.className = "recomendacao-info";
   const nome = document.createElement("strong");
   nome.textContent = rec.nome;
   const badge = document.createElement("span");
   badge.className = `score-badge ${scoreClass(score)}`;
-  badge.style.marginLeft = "10px";
   badge.textContent = `${score.toFixed(0)}%`;
   info.append(nome, badge);
 
   const acoes = document.createElement("div");
-  acoes.className = "acoes-conta";
+  acoes.className = "recomendacao-acoes";
 
   const btnConfirmar = document.createElement("button");
   btnConfirmar.textContent = "✓ Compatibilidade certa";
@@ -79,7 +76,6 @@ function criarLinhaRecomendacao(rec) {
   inputNota.min = "0";
   inputNota.max = "100";
   inputNota.placeholder = "0-100";
-  inputNota.style.width = "70px";
 
   const btnCorrigir = document.createElement("button");
   btnCorrigir.textContent = "Corrigir";

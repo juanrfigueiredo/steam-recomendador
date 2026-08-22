@@ -4,30 +4,36 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Recomendador de Jogos Steam</title>
+  <script src="js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">Recomendador Steam</div>
-  </header>
+  <div class="app-frame">
+    <header class="topbar">
+      <div class="brand">Recomendador Steam</div>
+    </header>
 
-  <main class="landing-hero">
-    <h1>Descubra o que jogar a seguir</h1>
-    <p>
-      Entre com sua conta Steam para receber recomendações de jogos baseadas
-      na sua própria biblioteca e horas jogadas. Gratuito, sem anúncio, sem
-      rastrear sua navegação.
-    </p>
-    <a class="btn-steam" id="link-login" href="#">Entrar com Steam</a>
+    <main class="landing-hero">
+      <h1>Descubra o que jogar a seguir</h1>
+      <p>
+        Entre com sua conta Steam para receber recomendações de jogos baseadas
+        na sua própria biblioteca e horas jogadas. Gratuito, sem anúncio, sem
+        rastrear sua navegação.
+      </p>
+      <a class="btn-steam" id="link-login" href="#">Entrar com Steam</a>
 
-    <p class="aviso-privacidade">
-      Lemos sua biblioteca, horas jogadas e conquistas via API oficial da
-      Steam para gerar as recomendações. Você decide separadamente se quer
-      contribuir com estatísticas agregadas e anônimas para pesquisa de
-      mercado -- essa opção fica desligada por padrão e pode ser mudada a
-      qualquer momento no seu painel.
-    </p>
-  </main>
+      <p class="aviso-privacidade">
+        Lemos sua biblioteca, horas jogadas e conquistas via API oficial da
+        Steam para gerar as recomendações. Você decide separadamente se quer
+        contribuir com estatísticas agregadas e anônimas para pesquisa de
+        mercado -- essa opção fica desligada por padrão e pode ser mudada a
+        qualquer momento no seu painel.
+      </p>
+    </main>
+  </div>
 
   <script src="js/config.js"></script>
   <script>

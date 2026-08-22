@@ -4,82 +4,90 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Painel — Recomendador Steam</title>
+  <script src="js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">Recomendador Steam</div>
-    <div class="perfil" id="perfil">
-      <img id="perfil-avatar" src="" alt="" hidden />
-      <span id="perfil-nome">carregando...</span>
-      <button id="btn-sair">Sair</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="card">
-      <div class="card-header">
-        <h2>Sua biblioteca</h2>
-        <button id="btn-sync" class="primary">Sincronizar com a Steam</button>
+  <div class="app-frame">
+    <header class="topbar">
+      <div class="brand">Recomendador Steam</div>
+      <div class="perfil" id="perfil">
+        <img id="perfil-avatar" src="" alt="" hidden />
+        <span id="perfil-nome">carregando...</span>
+        <button id="btn-sair">Sair</button>
       </div>
-      <p id="sync-mensagem" class="mensagem"></p>
-      <table id="tabela-biblioteca">
-        <thead>
-          <tr><th>Jogo</th><th>Horas jogadas</th></tr>
-        </thead>
-        <tbody id="biblioteca-linhas"></tbody>
-      </table>
-      <p id="biblioteca-vazia" class="lista-vazia" hidden>
-        Nenhum jogo sincronizado ainda. Clique em "Sincronizar com a Steam".
-      </p>
-    </section>
+    </header>
 
-    <section class="card">
-      <h2>Recomendações para você</h2>
-      <div id="recomendacoes-lista"></div>
-      <p id="recomendacoes-vazia" class="lista-vazia" hidden>
-        Nenhuma recomendação disponível ainda. Elas são calculadas em lote
-        periodicamente -- sincronize sua biblioteca e volte mais tarde.
-      </p>
-    </section>
-
-    <section class="card">
-      <h2>Uso comercial dos seus dados</h2>
-      <div class="toggle-row">
-        <div>
-          <strong>Permitir uso agregado e anônimo das minhas preferências</strong>
-          <p>
-            Desligado por padrão. Quando ligado, suas notas de feedback (nunca
-            sua identidade) podem entrar em estatísticas agregadas por gênero,
-            vendidas a parceiros de pesquisa de mercado. Você pode desligar a
-            qualquer momento.
-          </p>
+    <main class="container">
+      <section class="card">
+        <div class="card-header">
+          <h2>Sua biblioteca</h2>
+          <button id="btn-sync" class="primary">Sincronizar com a Steam</button>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="consent-toggle" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <p id="consent-mensagem" class="mensagem"></p>
-    </section>
-
-    <section class="card">
-      <h2>Seus dados</h2>
-      <div class="acoes-conta">
-        <button id="btn-export">Exportar meus dados (JSON)</button>
-      </div>
-      <div class="zona-perigo">
-        <strong>Excluir minha conta</strong>
-        <p>
-          Marca sua conta e biblioteca para exclusão definitiva em até 30
-          dias. Dado agregado e anonimizado publicado antes da exclusão não é
-          removido retroativamente, por já não ser dado pessoal.
+        <p id="sync-mensagem" class="mensagem"></p>
+        <div class="tabela-wrap">
+          <table id="tabela-biblioteca">
+            <thead>
+              <tr><th>Jogo</th><th>Horas jogadas</th></tr>
+            </thead>
+            <tbody id="biblioteca-linhas"></tbody>
+          </table>
+        </div>
+        <p id="biblioteca-vazia" class="lista-vazia" hidden>
+          Nenhum jogo sincronizado ainda. Clique em "Sincronizar com a Steam".
         </p>
-        <button id="btn-delete" class="danger">Excluir minha conta</button>
-      </div>
-      <p id="conta-mensagem" class="mensagem"></p>
-    </section>
-  </main>
+      </section>
+
+      <section class="card">
+        <h2>Recomendações para você</h2>
+        <div id="recomendacoes-lista"></div>
+        <p id="recomendacoes-vazia" class="lista-vazia" hidden>
+          Nenhuma recomendação disponível ainda. Elas são calculadas em lote
+          periodicamente -- sincronize sua biblioteca e volte mais tarde.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Uso comercial dos seus dados</h2>
+        <div class="toggle-row">
+          <div>
+            <strong>Permitir uso agregado e anônimo das minhas preferências</strong>
+            <p>
+              Desligado por padrão. Quando ligado, suas notas de feedback (nunca
+              sua identidade) podem entrar em estatísticas agregadas por gênero,
+              vendidas a parceiros de pesquisa de mercado. Você pode desligar a
+              qualquer momento.
+            </p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="consent-toggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p id="consent-mensagem" class="mensagem"></p>
+      </section>
+
+      <section class="card">
+        <h2>Seus dados</h2>
+        <div class="acoes-conta">
+          <button id="btn-export">Exportar meus dados (JSON)</button>
+        </div>
+        <div class="zona-perigo">
+          <strong>Excluir minha conta</strong>
+          <p>
+            Marca sua conta e biblioteca para exclusão definitiva em até 30
+            dias. Dado agregado e anonimizado publicado antes da exclusão não é
+            removido retroativamente, por já não ser dado pessoal.
+          </p>
+          <button id="btn-delete" class="danger">Excluir minha conta</button>
+        </div>
+        <p id="conta-mensagem" class="mensagem"></p>
+      </section>
+    </main>
+  </div>
 
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
