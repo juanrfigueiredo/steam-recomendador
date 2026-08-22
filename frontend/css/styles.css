@@ -68,12 +68,21 @@ html, body {
   padding: 0;
 }
 
+html {
+  /* Tipografia flui com a largura da tela em vez de ficar presa a um
+     tamanho fixo -- em monitores grandes o texto cresce proporcionalmente
+     ao invés de parecer perdido dentro da caixa. */
+  font-size: clamp(16px, 15px + 0.3vw, 20px);
+}
+
 body {
   font-family: var(--font-body);
   background: var(--bg-page);
   color: var(--text);
   line-height: 1.55;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -93,6 +102,7 @@ h1, h2, h3 {
 .app-frame {
   display: flex;
   flex-direction: column;
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   background: var(--bg-frame);
@@ -102,9 +112,21 @@ h1, h2, h3 {
 }
 
 @media (min-width: 1460px) {
+  /* Acima do tamanho de projeto, a caixa para de crescer com a tela --
+     fica com altura de teto (perto de 1080p menos a chrome do navegador)
+     e centraliza de verdade (flex no body), com rolagem própria se o
+     conteúdo passar do teto. Assim ela não vira uma caixa gigante e vazia
+     em monitores maiores. */
+  body {
+    align-items: center;
+    justify-content: center;
+  }
+
   .app-frame {
-    margin: 32px auto;
-    min-height: calc(100vh - 64px);
+    margin: 24px 0;
+    min-height: 0;
+    max-height: min(1000px, calc(100vh - 48px));
+    overflow-y: auto;
     border: 2px solid var(--border-strong);
     box-shadow: 14px 14px 0 var(--shadow-color);
   }
@@ -172,7 +194,7 @@ header.topbar .brand {
 }
 
 .aviso-privacidade {
-  margin-top: 44px;
+  margin-top: 80px;
   font-size: 0.85rem;
   color: var(--text-muted);
   max-width: 480px;

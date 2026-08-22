@@ -8,7 +8,7 @@ function scoreClass(score) {
 function formatarTempo(minutos) {
   const horas = Math.floor(minutos / 60);
   const minutosRestantes = Math.round(minutos % 60);
-  return `${horas}H${String(minutosRestantes).padStart(2, "0")}M`;
+  return `${horas}:${String(minutosRestantes).padStart(2, "0")}`;
 }
 
 function mostrarMensagem(elId, texto, tipo) {
