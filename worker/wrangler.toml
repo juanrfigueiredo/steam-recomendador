@@ -1,6 +1,7 @@
 name = "steam-recomendador-api"
 main = "src/index.ts"
 compatibility_date = "2024-09-01"
+account_id = "c02aa873b018a8d2d90afc2b0f20ff9c"
 
 # Secrets (definidos com `wrangler secret put <NOME>`, nunca aqui em texto):
 #   DATABASE_URL   -- connection string da Neon
