@@ -48,7 +48,10 @@ authRoutes.get("/steam/callback", async (c) => {
     path: "/",
   });
 
-  return c.redirect(`${c.env.FRONTEND_URL}/dashboard.html`);
+  // O frontend decide, no lado dele, se isso é um popup (avisa a janela
+  // original e se fecha) ou navegação de página inteira (segue pro
+  // dashboard) -- ver frontend/auth-callback.html.
+  return c.redirect(`${c.env.FRONTEND_URL}/auth-callback.html`);
 });
 
 authRoutes.post("/logout", (c) => {

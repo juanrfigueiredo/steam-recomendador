@@ -23,7 +23,7 @@
         na sua própria biblioteca e horas jogadas. Gratuito, sem anúncio, sem
         rastrear sua navegação.
       </p>
-      <a class="btn-steam" id="link-login" href="#">Entrar com Steam</a>
+      <button class="btn-steam" id="btn-login">Entrar com Steam</button>
 
       <p class="aviso-privacidade">
         Lemos sua biblioteca, horas jogadas e conquistas via API oficial da
@@ -36,8 +36,11 @@
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/login.js"></script>
   <script>
-    document.getElementById("link-login").href = `${API_BASE_URL}/auth/steam/login`;
+    document.getElementById("btn-login").addEventListener("click", () => {
+      iniciarLoginSteam(`${API_BASE_URL}/auth/steam/login`);
+    });
   </script>
 </body>
 </html>

@@ -5,8 +5,10 @@ function scoreClass(score) {
   return "score-vermelho";
 }
 
-function formatarHoras(minutos) {
-  return (minutos / 60).toFixed(1).replace(".0", "");
+function formatarTempo(minutos) {
+  const horas = Math.floor(minutos / 60);
+  const minutosRestantes = Math.round(minutos % 60);
+  return `${horas}H${String(minutosRestantes).padStart(2, "0")}M`;
 }
 
 function mostrarMensagem(elId, texto, tipo) {
@@ -26,27 +28,47 @@ async function carregarPerfil() {
   return perfil;
 }
 
+const ITENS_POR_PAGINA = 20;
+let bibliotecaJogos = [];
+let bibliotecaPagina = 1;
+
 async function carregarBiblioteca() {
   const { jogos } = await apiGetJson("/me/library");
-  const linhas = document.getElementById("biblioteca-linhas");
+  bibliotecaJogos = jogos;
+  bibliotecaPagina = 1;
+
   const vazio = document.getElementById("biblioteca-vazia");
+  vazio.hidden = jogos.length > 0;
+
+  renderizarPaginaBiblioteca();
+}
+
+function renderizarPaginaBiblioteca() {
+  const linhas = document.getElementById("biblioteca-linhas");
+  const paginacao = document.getElementById("biblioteca-paginacao");
   linhas.textContent = "";
 
-  if (jogos.length === 0) {
-    vazio.hidden = false;
-    return;
-  }
-  vazio.hidden = true;
+  const totalPaginas = Math.max(1, Math.ceil(bibliotecaJogos.length / ITENS_POR_PAGINA));
+  bibliotecaPagina = Math.min(bibliotecaPagina, totalPaginas);
 
-  for (const jogo of jogos) {
+  const inicio = (bibliotecaPagina - 1) * ITENS_POR_PAGINA;
+  const pagina = bibliotecaJogos.slice(inicio, inicio + ITENS_POR_PAGINA);
+
+  for (const jogo of pagina) {
     const tr = document.createElement("tr");
     const tdNome = document.createElement("td");
     tdNome.textContent = jogo.nome;
     const tdHoras = document.createElement("td");
-    tdHoras.textContent = `${formatarHoras(jogo.playtime_minutos)}h`;
+    tdHoras.textContent = formatarTempo(jogo.playtime_minutos);
     tr.append(tdNome, tdHoras);
     linhas.appendChild(tr);
   }
+
+  paginacao.hidden = bibliotecaJogos.length <= ITENS_POR_PAGINA;
+  document.getElementById("biblioteca-pagina-info").textContent =
+    `Página ${bibliotecaPagina} de ${totalPaginas}`;
+  document.getElementById("biblioteca-anterior").disabled = bibliotecaPagina <= 1;
+  document.getElementById("biblioteca-proxima").disabled = bibliotecaPagina >= totalPaginas;
 }
 
 function criarLinhaRecomendacao(rec) {
@@ -148,6 +170,16 @@ function configurarAcoes() {
     } finally {
       e.target.disabled = false;
     }
+  };
+
+  document.getElementById("biblioteca-anterior").onclick = () => {
+    bibliotecaPagina -= 1;
+    renderizarPaginaBiblioteca();
+  };
+
+  document.getElementById("biblioteca-proxima").onclick = () => {
+    bibliotecaPagina += 1;
+    renderizarPaginaBiblioteca();
   };
 
   document.getElementById("consent-toggle").onchange = async (e) => {

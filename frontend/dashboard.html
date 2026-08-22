@@ -23,6 +23,15 @@
 
     <main class="container">
       <section class="card">
+        <h2>Recomendações para você</h2>
+        <div id="recomendacoes-lista"></div>
+        <p id="recomendacoes-vazia" class="lista-vazia" hidden>
+          Nenhuma recomendação disponível ainda. Elas são calculadas em lote
+          periodicamente -- sincronize sua biblioteca e volte mais tarde.
+        </p>
+      </section>
+
+      <section class="card">
         <div class="card-header">
           <h2>Sua biblioteca</h2>
           <button id="btn-sync" class="primary">Sincronizar com a Steam</button>
@@ -31,22 +40,18 @@
         <div class="tabela-wrap">
           <table id="tabela-biblioteca">
             <thead>
-              <tr><th>Jogo</th><th>Horas jogadas</th></tr>
+              <tr><th>Jogo</th><th>Tempo jogado</th></tr>
             </thead>
             <tbody id="biblioteca-linhas"></tbody>
           </table>
         </div>
+        <div class="paginacao" id="biblioteca-paginacao" hidden>
+          <button id="biblioteca-anterior">← Anterior</button>
+          <span id="biblioteca-pagina-info"></span>
+          <button id="biblioteca-proxima">Próxima →</button>
+        </div>
         <p id="biblioteca-vazia" class="lista-vazia" hidden>
           Nenhum jogo sincronizado ainda. Clique em "Sincronizar com a Steam".
-        </p>
-      </section>
-
-      <section class="card">
-        <h2>Recomendações para você</h2>
-        <div id="recomendacoes-lista"></div>
-        <p id="recomendacoes-vazia" class="lista-vazia" hidden>
-          Nenhuma recomendação disponível ainda. Elas são calculadas em lote
-          periodicamente -- sincronize sua biblioteca e volte mais tarde.
         </p>
       </section>
 

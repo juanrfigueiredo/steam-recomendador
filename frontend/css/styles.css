@@ -9,7 +9,7 @@
   --bg-card: #1e1f1a;
   --bg-card-hover: #262820;
   --text: #fcfcfc;
-  --text-muted: #a7b393;
+  --text-muted: #d3e0ba;
   --border: #33361f;
   --border-strong: #fcfcfc;
 
@@ -91,6 +91,8 @@ h1, h2, h3 {
    vira fluida e os elementos internos se reorganizam (media queries). */
 
 .app-frame {
+  display: flex;
+  flex-direction: column;
   max-width: 1400px;
   margin: 0 auto;
   background: var(--bg-frame);
@@ -109,9 +111,11 @@ h1, h2, h3 {
 }
 
 .container {
+  flex: 1;
   max-width: 880px;
   margin: 0 auto;
   padding: 24px 24px 64px;
+  width: 100%;
 }
 
 /* --- topbar --- */
@@ -147,8 +151,13 @@ header.topbar .brand {
 /* --- landing --- */
 
 .landing-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 100px 24px;
+  padding: 48px 24px;
 }
 
 .landing-hero h1 {
@@ -285,6 +294,19 @@ th {
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.04em;
+}
+
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+.paginacao span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 .lista-vazia {

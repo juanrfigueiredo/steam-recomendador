@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Entrando…</title>
+  <script src="js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-frame">
+    <main class="landing-hero">
+      <p>Entrando na sua conta…</p>
+    </main>
+  </div>
+
+  <script>
+    // Esta página é o destino do callback da Steam. Se foi aberta como
+    // popup (fluxo normal, ver js/login.js), avisa a janela original via
+    // postMessage e se fecha. Se não tem opener (popup bloqueado e o login
+    // caiu de volta pra navegação de página inteira), segue direto pro
+    // dashboard.
+    if (window.opener) {
+      window.opener.postMessage("steam-login-sucesso", window.location.origin);
+      window.close();
+    } else {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>
