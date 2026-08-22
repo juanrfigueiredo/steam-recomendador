@@ -193,11 +193,11 @@ header.topbar .brand {
   margin-top: 0;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 36px;
+  margin-bottom: 56px;
 }
 
 .aviso-privacidade {
-  margin-top: 100px;
+  margin-top: 56px;
   font-size: 0.85rem;
   color: var(--text-muted);
   max-width: 480px;
