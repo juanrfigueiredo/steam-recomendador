@@ -34,3 +34,8 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler pages deploy frontend --project-name=steam-recomendador --branch=main
+
+      - name: Testes de fumaça (login redireciona, rotas protegidas voltam 401, etc.)
+        run: |
+          sleep 10
+          bash scripts/smoke_test.sh
