@@ -10,7 +10,9 @@ recommendationsRoutes.use("*", requireAuth);
 recommendationsRoutes.get("/", async (c) => {
   const db = getDb(c.env);
   const rows = await db`
-    select r.app_id, gc.nome, r.score, r.generated_at
+    select r.app_id, gc.nome, gc.imagem_url, gc.preco_moeda, gc.preco_inicial_centavos,
+           gc.preco_final_centavos, gc.desconto_percentual, gc.gratuito, r.genero_motivo,
+           r.score, r.generated_at
     from recommendations r
     join game_catalog gc on gc.app_id = r.app_id
     where r.user_id = ${c.get("userId")}

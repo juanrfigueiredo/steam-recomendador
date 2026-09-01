@@ -25,6 +25,11 @@
       <section class="card">
         <h2>Recomendações para você</h2>
         <div id="recomendacoes-lista"></div>
+        <div class="paginacao" id="recomendacoes-paginacao" hidden>
+          <button id="recomendacoes-anterior">← Anterior</button>
+          <span id="recomendacoes-pagina-info"></span>
+          <button id="recomendacoes-proxima">Próxima →</button>
+        </div>
         <p id="recomendacoes-vazia" class="lista-vazia" hidden>
           Nenhuma recomendação disponível ainda. Elas são calculadas em lote
           periodicamente -- sincronize sua biblioteca e volte mais tarde.
@@ -96,6 +101,7 @@
 
   <script src="js/config.js?v=__BUILD__"></script>
   <script src="js/api.js?v=__BUILD__"></script>
+  <script src="js/dial.js?v=__BUILD__"></script>
   <script src="js/dashboard.js?v=__BUILD__"></script>
 </body>
 </html>

@@ -71,52 +71,100 @@ function renderizarPaginaBiblioteca() {
   document.getElementById("biblioteca-proxima").disabled = bibliotecaPagina >= totalPaginas;
 }
 
+function formatarPreco(centavos, moeda) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: moeda || "BRL",
+  }).format(centavos / 100);
+}
+
+function criarSeloPreco(rec) {
+  if (rec.gratuito) {
+    const selo = document.createElement("span");
+    selo.className = "recomendacao-selo selo-gratis";
+    selo.textContent = "Grátis";
+    return selo;
+  }
+
+  if (rec.preco_final_centavos == null) return null;
+
+  const selo = document.createElement("span");
+  selo.className = "recomendacao-selo";
+
+  if (rec.desconto_percentual > 0) {
+    selo.classList.add("selo-promocao");
+    const precoInicial = document.createElement("s");
+    precoInicial.textContent = formatarPreco(rec.preco_inicial_centavos, rec.preco_moeda);
+    selo.append(
+      `-${rec.desconto_percentual}% `,
+      formatarPreco(rec.preco_final_centavos, rec.preco_moeda),
+      " ",
+      precoInicial
+    );
+  } else {
+    selo.textContent = formatarPreco(rec.preco_final_centavos, rec.preco_moeda);
+  }
+
+  return selo;
+}
+
 function criarLinhaRecomendacao(rec) {
   const score = Number(rec.score);
 
   const item = document.createElement("div");
   item.className = "recomendacao-item";
 
+  if (rec.imagem_url) {
+    const capa = document.createElement("div");
+    capa.className = "recomendacao-capa";
+    const img = document.createElement("img");
+    img.src = rec.imagem_url;
+    img.alt = "";
+    img.loading = "lazy";
+    capa.appendChild(img);
+    item.appendChild(capa);
+  }
+
   const info = document.createElement("div");
   info.className = "recomendacao-info";
-  const nome = document.createElement("strong");
+
+  const nome = document.createElement("a");
+  nome.className = "recomendacao-nome";
+  nome.href = `https://store.steampowered.com/app/${rec.app_id}`;
+  nome.target = "_blank";
+  nome.rel = "noopener";
   nome.textContent = rec.nome;
-  const badge = document.createElement("span");
-  badge.className = `score-badge ${scoreClass(score)}`;
-  badge.textContent = `${score.toFixed(0)}%`;
-  info.append(nome, badge);
+  info.appendChild(nome);
+
+  const selo = criarSeloPreco(rec);
+  if (selo) info.appendChild(selo);
+
+  if (rec.genero_motivo) {
+    const motivo = document.createElement("p");
+    motivo.className = "recomendacao-motivo";
+    motivo.textContent = `Recomendado porque você joga muito ${rec.genero_motivo}`;
+    info.appendChild(motivo);
+  }
 
   const acoes = document.createElement("div");
   acoes.className = "recomendacao-acoes";
 
-  const btnConfirmar = document.createElement("button");
-  btnConfirmar.textContent = "✓ Compatibilidade certa";
-  btnConfirmar.onclick = () => enviarFeedback(rec.app_id, score, true, null, acoes);
+  const dial = criarDialCompatibilidade({
+    valorInicial: score,
+    classeCor: scoreClass,
+    aoEnviar: async (valor, mudou) => {
+      const resposta = await enviarFeedback(rec.app_id, score, !mudou, mudou ? valor : undefined);
+      if (resposta.ok) dial.congelar();
+    },
+  });
+  acoes.appendChild(dial.elemento);
 
-  const inputNota = document.createElement("input");
-  inputNota.type = "number";
-  inputNota.min = "0";
-  inputNota.max = "100";
-  inputNota.placeholder = "0-100";
-
-  const btnCorrigir = document.createElement("button");
-  btnCorrigir.textContent = "Corrigir";
-  btnCorrigir.onclick = () => {
-    const nota = Number(inputNota.value);
-    if (!Number.isInteger(nota) || nota < 0 || nota > 100) {
-      inputNota.focus();
-      return;
-    }
-    enviarFeedback(rec.app_id, score, false, nota, acoes);
-  };
-
-  acoes.append(btnConfirmar, inputNota, btnCorrigir);
   item.append(info, acoes);
   return item;
 }
 
-async function enviarFeedback(appId, predictedScore, confirmed, userRating, acoesEl) {
-  const response = await apiFetch("/feedback", {
+async function enviarFeedback(appId, predictedScore, confirmed, userRating) {
+  return apiFetch("/feedback", {
     method: "POST",
     body: JSON.stringify({
       app_id: appId,
@@ -125,26 +173,42 @@ async function enviarFeedback(appId, predictedScore, confirmed, userRating, acoe
       ...(confirmed ? {} : { user_rating: userRating }),
     }),
   });
-  if (response.ok) {
-    acoesEl.textContent = "Obrigado pelo feedback!";
-  }
 }
+
+const ITENS_POR_PAGINA_RECOMENDACOES = 10;
+let recomendacoesLista = [];
+let recomendacoesPagina = 1;
 
 async function carregarRecomendacoes() {
   const { recomendacoes } = await apiGetJson("/recommendations");
+  recomendacoesLista = recomendacoes;
+  recomendacoesPagina = 1;
+
+  document.getElementById("recomendacoes-vazia").hidden = recomendacoes.length > 0;
+
+  renderizarPaginaRecomendacoes();
+}
+
+function renderizarPaginaRecomendacoes() {
   const lista = document.getElementById("recomendacoes-lista");
-  const vazio = document.getElementById("recomendacoes-vazia");
+  const paginacao = document.getElementById("recomendacoes-paginacao");
   lista.textContent = "";
 
-  if (recomendacoes.length === 0) {
-    vazio.hidden = false;
-    return;
-  }
-  vazio.hidden = true;
+  const totalPaginas = Math.max(1, Math.ceil(recomendacoesLista.length / ITENS_POR_PAGINA_RECOMENDACOES));
+  recomendacoesPagina = Math.min(recomendacoesPagina, totalPaginas);
 
-  for (const rec of recomendacoes) {
+  const inicio = (recomendacoesPagina - 1) * ITENS_POR_PAGINA_RECOMENDACOES;
+  const pagina = recomendacoesLista.slice(inicio, inicio + ITENS_POR_PAGINA_RECOMENDACOES);
+
+  for (const rec of pagina) {
     lista.appendChild(criarLinhaRecomendacao(rec));
   }
+
+  paginacao.hidden = recomendacoesLista.length <= ITENS_POR_PAGINA_RECOMENDACOES;
+  document.getElementById("recomendacoes-pagina-info").textContent =
+    `Página ${recomendacoesPagina} de ${totalPaginas}`;
+  document.getElementById("recomendacoes-anterior").disabled = recomendacoesPagina <= 1;
+  document.getElementById("recomendacoes-proxima").disabled = recomendacoesPagina >= totalPaginas;
 }
 
 async function carregarConsentimento() {
@@ -170,6 +234,16 @@ function configurarAcoes() {
     } finally {
       e.target.disabled = false;
     }
+  };
+
+  document.getElementById("recomendacoes-anterior").onclick = () => {
+    recomendacoesPagina -= 1;
+    renderizarPaginaRecomendacoes();
+  };
+
+  document.getElementById("recomendacoes-proxima").onclick = () => {
+    recomendacoesPagina += 1;
+    renderizarPaginaRecomendacoes();
   };
 
   document.getElementById("biblioteca-anterior").onclick = () => {

@@ -11,6 +11,7 @@ FRONTEND_URL="${FRONTEND_URL:-https://steam-recomendador.pages.dev}"
 FALHAS=0
 
 status_de() { curl -s -o /dev/null -w '%{http_code}' "$1"; }
+status_post_de() { curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{}' "$1"; }
 headers_de() { curl -s -D - -o /dev/null "$1"; }
 content_type_de() { headers_de "$1" | grep -i '^content-type:' | tr -d '\r'; }
 
@@ -48,10 +49,12 @@ contem "return_to aponta pro proxy same-origin (não pro domínio do Worker)" "o
 
 # --- Rotas autenticadas sem cookie: tem que voltar 401 JSON do Worker, nunca
 #     200 HTML (200 HTML = sinal do bug do fallback de SPA voltando) ---
-for rota in "/api/me" "/api/me/library" "/api/recommendations"; do
+for rota in "/api/me" "/api/me/library" "/api/recommendations" "/api/score/570"; do
   checar "GET $rota sem cookie responde 401" "401" "$(status_de "$FRONTEND_URL$rota")"
   contem "GET $rota sem cookie responde JSON (não HTML da landing)" "application/json" "$(content_type_de "$FRONTEND_URL$rota")"
 done
+
+checar "POST /api/feedback sem cookie responde 401" "401" "$(status_post_de "$FRONTEND_URL/api/feedback")"
 
 # --- Páginas estáticas do frontend continuam servindo normal ---
 checar "GET / responde 200" "200" "$(status_de "$FRONTEND_URL/")"

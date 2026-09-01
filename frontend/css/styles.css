@@ -316,24 +316,10 @@ th {
   padding: 12px 0;
 }
 
-/* --- score badge (mesma paleta usada na extensão) --- */
-
-.score-badge {
-  display: inline-block;
-  min-width: 44px;
-  text-align: center;
-  padding: 3px 10px;
-  border-radius: 0;
-  border: 2px solid var(--border-strong);
-  font-weight: 700;
-  font-size: 0.8rem;
-  color: var(--on-accent);
-}
-
-.score-verde { background: var(--score-verde); }
-.score-amarelo { background: var(--score-amarelo); }
-.score-neutro { background: var(--score-neutro); color: var(--text); }
-.score-vermelho { background: var(--score-vermelho); color: var(--on-accent); }
+/* --- faixas de score (mesma paleta usada na extensão) --- */
+/* As classes score-verde/amarelo/neutro/vermelho são aplicadas pelo JS
+   (scoreClass()) tanto em elementos de recomendação quanto no dial de
+   compatibilidade -- ver regras específicas do dial mais abaixo. */
 
 /* --- consentimento --- */
 
@@ -433,7 +419,7 @@ th {
 
 .recomendacao-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   border-bottom: 1px solid var(--border);
@@ -442,29 +428,145 @@ th {
   flex-wrap: wrap;
 }
 
+.recomendacao-capa {
+  flex-shrink: 0;
+  width: 120px;
+  aspect-ratio: 460 / 215;
+  border: 2px solid var(--border);
+  overflow: hidden;
+}
+
+.recomendacao-capa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .recomendacao-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.recomendacao-nome {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.recomendacao-nome:hover {
+  color: var(--accent-strong);
+  text-decoration: underline;
+}
+
+.recomendacao-selo {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 2px solid var(--border-strong);
+  font-weight: 700;
+  font-size: 0.8rem;
+  background: var(--bg-frame);
+  color: var(--text);
+}
+
+.recomendacao-selo s {
+  font-weight: 400;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+.recomendacao-selo.selo-gratis {
+  background: var(--accent-soft);
+  color: var(--on-accent);
+}
+
+.recomendacao-selo.selo-promocao {
+  background: var(--accent-strong);
+  color: var(--on-accent);
+}
+
+.recomendacao-motivo {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 .recomendacao-acoes {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
-.recomendacao-acoes input[type="number"] {
+/* --- dial de compatibilidade (arrastar pra corrigir o score) --- */
+
+.dial-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.dial-compatibilidade {
+  position: relative;
   width: 72px;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  padding: 9px 10px;
-  border: 2px solid var(--border-strong);
-  border-radius: 0;
-  background: var(--bg-frame);
+  height: 72px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.dial-compatibilidade:active {
+  cursor: grabbing;
+}
+
+.dial-compatibilidade:focus-visible {
+  outline: 3px solid var(--accent-strong);
+  outline-offset: 4px;
+}
+
+.dial-trilho {
+  stroke: var(--border);
+}
+
+.dial-arco {
+  stroke: var(--score-neutro);
+  stroke-linecap: butt;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+.dial-compatibilidade.score-verde .dial-arco { stroke: var(--score-verde); }
+.dial-compatibilidade.score-amarelo .dial-arco { stroke: var(--score-amarelo); }
+.dial-compatibilidade.score-neutro .dial-arco { stroke: var(--score-neutro); }
+.dial-compatibilidade.score-vermelho .dial-arco { stroke: var(--score-vermelho); }
+
+.dial-alca {
+  fill: var(--border-strong);
+}
+
+.dial-valor {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
   color: var(--text);
+  pointer-events: none;
+}
+
+.dial-submit {
+  font-size: 0.8rem;
+  padding: 7px 12px;
+  white-space: nowrap;
+}
+
+.dial-obrigado {
+  color: var(--score-verde);
+  font-size: 0.85rem;
 }
 
 /* ---------------------------------------------------------------------

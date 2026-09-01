@@ -24,8 +24,18 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python scripts/enrich_catalog.py
 
+      - name: Atualizar preço/desconto do catálogo (Steam Store API)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ENRICH_MODO: preco
+          ENRICH_MAX_APPS: "400"
+        run: python scripts/enrich_catalog.py
+
+      - name: Rodar testes do motor de recomendação
+        run: pytest
+
       - name: Gerar recomendações
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TOP_N_POR_USUARIO: "50"
-        run: python scripts/generate-recommendations.py
+        run: python scripts/generate_recommendations.py

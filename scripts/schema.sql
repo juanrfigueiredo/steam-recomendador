@@ -65,3 +65,20 @@ create table if not exists deletion_requests (
 create index if not exists idx_feedback_user_id on feedback(user_id);
 create index if not exists idx_feedback_created_at on feedback(created_at);
 create index if not exists idx_recommendations_user_id on recommendations(user_id);
+
+-- Fase de reformulação do motor de recomendação: imagem/preço/desconto (pra
+-- exibição na UI) e controle de tentativas de enriquecimento (evita re-tentar
+-- pra sempre um jogo sem gênero disponível na Steam).
+alter table game_catalog add column if not exists imagem_url text;
+alter table game_catalog add column if not exists preco_moeda text;
+alter table game_catalog add column if not exists preco_inicial_centavos integer;
+alter table game_catalog add column if not exists preco_final_centavos integer;
+alter table game_catalog add column if not exists desconto_percentual smallint;
+alter table game_catalog add column if not exists gratuito boolean;
+alter table game_catalog add column if not exists preco_atualizado_em timestamptz;
+alter table game_catalog add column if not exists tentativas_enriquecimento smallint not null default 0;
+
+-- Gênero que mais contribuiu pro score, pra explicar a recomendação ao usuário.
+alter table recommendations add column if not exists genero_motivo text;
+
+create index if not exists idx_game_catalog_preco_atualizado_em on game_catalog(preco_atualizado_em);

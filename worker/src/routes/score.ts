@@ -36,12 +36,15 @@ scoreRoutes.get("/:appId", async (c) => {
   } else {
     // Fallback: jogo ainda não teve score calculado em lote. Heurística
     // simples baseada na média de compatibilidade dos jogos já pontuados
-    // do mesmo gênero -- suficiente até o próximo ciclo do batch (Fase 2).
+    // que compartilham pelo menos uma tag com este -- suficiente até o
+    // próximo ciclo do batch (Fase 2). `&&` é o operador de overlap de
+    // array do Postgres; null && qualquer coisa é falso, então jogos sem
+    // tag continuam degradando graciosamente pro score neutro abaixo.
     const fallbackRows = await db`
       select avg(r.score) as media
       from recommendations r
       join game_catalog gc_target on gc_target.app_id = ${appId}
-      join game_catalog gc_scored on gc_scored.app_id = r.app_id and gc_scored.genero = gc_target.genero
+      join game_catalog gc_scored on gc_scored.app_id = r.app_id and gc_scored.tags && gc_target.tags
       where r.user_id = ${c.get("userId")}
     `;
     const media = (fallbackRows[0] as { media: string | null } | undefined)?.media;
