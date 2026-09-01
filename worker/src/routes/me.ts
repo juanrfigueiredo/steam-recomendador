@@ -4,6 +4,7 @@ import { getDb } from "../lib/db";
 import type { AuthedVars } from "../lib/authMiddleware";
 import { requireAuth } from "../lib/authMiddleware";
 import { fetchOwnedGames } from "../lib/steamAuth";
+import { triggerRecommendationGeneration } from "../lib/github";
 
 export const meRoutes = new Hono<{ Bindings: Env; Variables: AuthedVars }>();
 meRoutes.use("*", requireAuth);
@@ -67,6 +68,9 @@ meRoutes.post("/sync", async (c) => {
     } catch (err) {
       return c.json({ error: "falha ao sincronizar biblioteca", detalhe: String(err) }, 500);
     }
+
+    // Não bloqueia a resposta do sync -- dispara e segue.
+    c.executionCtx.waitUntil(triggerRecommendationGeneration(c.env.GITHUB_DISPATCH_TOKEN));
   }
 
   return c.json({ ok: true, jogos_sincronizados: games.length });

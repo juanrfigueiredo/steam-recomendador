@@ -8,8 +8,12 @@ import { createSessionToken, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS } from "..
 export const authRoutes = new Hono<{ Bindings: Env }>();
 
 authRoutes.get("/steam/login", (c) => {
-  const returnTo = `${c.env.PUBLIC_BASE_URL}/auth/steam/callback`;
-  const realm = c.env.PUBLIC_BASE_URL;
+  // return_to/realm apontam pro proxy same-origin do frontend
+  // (frontend/functions/api/), não pro domínio do Worker -- é lá que o
+  // navegador acaba depois do callback, e é onde o cookie de sessão
+  // precisa ser gravado como primeiro domínio (ver setCookie abaixo).
+  const returnTo = `${c.env.FRONTEND_URL}/api/auth/steam/callback`;
+  const realm = c.env.FRONTEND_URL;
   return c.redirect(buildSteamLoginUrl(returnTo, realm));
 });
 
@@ -41,9 +45,11 @@ authRoutes.get("/steam/callback", async (c) => {
   setCookie(c, SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: true,
-    // "None" porque o frontend (Cloudflare Pages) fica em domínio
-    // diferente do Worker -- precisa ser enviado em fetch() cross-site.
-    sameSite: "None",
+    // "Lax" porque este callback é alcançado via proxy same-origin do
+    // frontend (frontend/functions/api/) -- o navegador só vê o domínio do
+    // Pages, então o cookie é de primeira parte (não é mais bloqueado por
+    // navegadores que recusam cookies de terceiros).
+    sameSite: "Lax",
     maxAge: SESSION_TTL_SECONDS,
     path: "/",
   });

@@ -1,6 +1,5 @@
-// Wrapper fino sobre fetch: sempre manda o cookie de sessão (cross-site,
-// Worker e frontend ficam em domínios diferentes) e trata 401 de forma
-// consistente em todas as páginas autenticadas.
+// Wrapper fino sobre fetch: sempre manda o cookie de sessão e trata 401 de
+// forma consistente em todas as páginas autenticadas.
 async function apiFetch(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,

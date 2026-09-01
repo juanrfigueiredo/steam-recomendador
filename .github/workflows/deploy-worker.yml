@@ -32,10 +32,12 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          GITHUB_DISPATCH_TOKEN: ${{ secrets.GH_DISPATCH_TOKEN }}
         run: |
           echo "$DATABASE_URL" | npx wrangler secret put DATABASE_URL
           echo "$STEAM_API_KEY" | npx wrangler secret put STEAM_API_KEY
           echo "$SESSION_SECRET" | npx wrangler secret put SESSION_SECRET
+          echo "$GITHUB_DISPATCH_TOKEN" | npx wrangler secret put GITHUB_DISPATCH_TOKEN
 
       - name: Deploy
         env:
